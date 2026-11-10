@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#080a12" />
+  <meta name="description" content="YH 本地通用音频事件运行时。把统一事件送到引擎。" />
+  <title>YH · Universal Runtime</title>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <a class="brand" href="#" aria-label="YH 首页"><span class="brand-mark"><i></i><i></i><i></i></span><span>YH<span class="brand-sub"> / UNIVERSAL RUNTIME</span></span></a>
+      <div class="topbar-center"><span class="eyebrow">LOCAL · PRIVATE · ENGINE-NEUTRAL</span><span>音频事件运行时</span></div>
+      <div class="connection-pill" id="connectionPill"><i class="status-dot"></i><span id="connectionText">正在连接</span></div>
+    </header>
+
+    <main>
+      <section class="intro-row">
+        <div>
+          <div class="eyebrow section-kicker"><span class="kicker-line"></span> AUDIO → YH EVENTS → YOUR ENGINE</div>
+          <h1>一个事件接口，<em>多种引擎。</em></h1>
+          <p class="intro-copy">本地浏览器直接采集麦克风；把统一事件送到引擎。音频只在本机分析与处理。</p>
+        </div>
+        <div class="live-counter"><span class="live-wave"><i></i><i></i><i></i><i></i><i></i></span><div><strong id="eventCount">0</strong><span> EVENTS</span></div></div>
+      </section>
+
+      <section class="layout-grid">
+        <aside class="controls-column">
+          <section class="panel control-panel">
+            <div class="panel-heading"><div class="panel-icon">◖</div><div><div class="panel-title">本机麦克风</div><div class="panel-subtitle">音频只在当前浏览器本地分析</div></div><span id="micBadge" class="badge">OFF</span></div>
+            <div class="mic-row"><button id="micToggle" class="mic-button" type="button" aria-pressed="false"><span class="mic-button-dot"></span><span id="micButtonText">开启麦克风</span></button><span id="micStatus" class="mic-status">麦克风已关闭</span></div>
+            <div class="input-row">
+              <label for="inputKind">音频来源</label>
+              <select id="inputKind" class="select-field" aria-label="音频来源"><option value="microphone">麦克风</option><option value="display">标签页 / 系统音频</option></select>
+            </div>
+            <div class="input-row" id="deviceRow">
+              <label for="deviceSelect">输入设备</label>
+              <select id="deviceSelect" class="select-field" aria-label="麦克风设备"><option value="">系统默认设备</option></select>
+            </div>
+            <div class="input-row">
+              <label for="soundMode">互动模式</label>
+              <select id="soundMode" class="select-field"><option value="level">电平与起音</option><option value="cue">仅目标声</option></select>
+            </div>
+            <div class="input-row">
+              <label for="cueName">目标名称</label>
+              <input id="cueName" class="select-field" type="text" maxlength="20" autocomplete="off" spellcheck="false" placeholder="如 clap；中文名会自动分配地址" aria-label="目标声名称" />
+            </div>
+            <div class="input-row">
+              <label for="cueTakes">录入次数</label>
+              <select id="cueTakes" class="select-field" aria-label="录入次数"><option value="3" selected>3 次（推荐）</option><option value="4">4 次</option><option value="5">5 次</option></select>
+            </div>
+            <div class="cue-controls">
+              <button id="recordCue" class="mic-button" type="button" disabled>录入目标声</button>
+              <button id="clearCue" class="text-button" type="button" hidden>清除全部</button>
+            </div>
+            <p id="cueHint" class="fineprint">同一个声音连续录入几次，识别容差按你每次的差别自动确定。每个目标声发送 <code>/yh/cue/&lt;名称&gt;</code>，同时仍发送 <code>/yh/onset</code>。录入前先看实时 RMS，把最低门限调到背景声与目标声之间。使用随附提示音时，可先试 <b>0.004</b>。</p>
+            <ul id="cueList" class="cue-list" aria-label="已录入的目标声"></ul>
+            <div class="input-row" id="strictRow">
+              <label for="cueStrictness">严格度</label>
+              <select id="cueStrictness" class="select-field" aria-label="识别严格度"><option value="0.75">严格</option><option value="1" selected>标准</option><option value="1.4">宽松</option></select>
+            </div>
+            <p id="cueStatus" class="mic-status" role="status">开启音频后可录入一段短声。</p>
+            <div class="control-label-row"><label for="thresholdSlider">校正 RMS 最低门限</label><span class="value-readout"><b id="thresholdValue">0.010</b></span></div>
+            <input id="thresholdSlider" class="range-slider" type="range" min="0.001" max="0.05" value="0.01" step="0.001" aria-label="校正 RMS 触发门限" />
+            <div class="range-ends"><span>更灵敏 · 0.001</span><span>较不灵敏 · 0.050</span></div>
+            <div class="meter-label"><span>实时 RMS</span><b id="rmsReadout">0.0000</b></div>
+            <div class="meter-track"><div id="meterFill" class="meter-fill"></div><i id="thresholdMarker" class="threshold-marker"></i></div>
+            <div class="meter-foot"><span>环境底噪 <b id="noiseFloorReadout">—</b></span><span id="noiseGateStatus">等待麦克风</span></div>
+            <p class="fineprint">开启后用约 1.2 秒的普通环境声估算底噪（不要求绝对安静），随后持续自适应跟踪；仅当信号超过滑块最低门限且明显高于底噪时触发，并需持续安静约 0.1 秒才重新待触发。监视器的 /yh/level 是 RMS ÷ 0.25 后的归一化连续值，不能与 RMS 门限直接比较。RMS 未经设备或声学标定，不是 dBFS 或 dB SPL。</p>
+          </section>
+
+          <section class="panel control-panel mock-panel">
+            <div class="panel-heading"><div class="panel-icon violet">≋</div><div><div class="panel-title">合成事件测试</div><div class="panel-subtitle">无需麦克风即可验证事件链路</div></div><span class="badge violet-badge">SYNTHETIC</span></div>
+            <div class="control-label-row"><label for="levelSlider">基准电平</label><span class="value-readout"><b id="levelValue">0.42</b><small> / 1.00</small></span></div>
+            <input id="levelSlider" class="range-slider level-slider" type="range" min="0" max="1" value="0.42" step="0.001" aria-label="发送合成 YH 电平" />
+            <div class="range-ends"><span>/yh/level</span><span>归一化 0—1</span></div>
+            <button id="pulseButton" class="pulse-button" type="button"><span>✳</span> 发送合成 onset <code>/yh/onset</code></button>
+            <p class="fineprint">这些按钮通过本机 WebSocket → OSC/UDP 回环发送测试值；它们不代表真实麦克风测试。</p>
+          </section>
+
+          <section class="endpoint-card">
+            <div class="endpoint-top"><span class="endpoint-label">LOCAL ONLY</span><span class="endpoint-lock">不会发布 / 不上传音频</span></div>
+            <div class="endpoint-row"><span>WEBSOCKET</span><code id="wsEndpoint">ws://127.0.0.1:8765/ws</code></div>
+            <div class="endpoint-row"><span>OSC / UDP</span><code>127.0.0.1:<b id="udpPort">9000</b></code></div>
+          </section>
+        </aside>
+
+        <section class="panel scene-panel">
+          <div class="scene-header"><div><div class="scene-label"><i></i> LIVE DEMO</div><div class="scene-title">Signal / Form <span>01</span></div></div><div class="scene-meta"><span class="engine-chip">YH EVENTS</span><span class="fps-counter"><b id="fpsValue">—</b> FPS</span></div></div>
+          <div class="scene-wrap" id="sceneWrap"><canvas id="sceneCanvas" aria-label="由 YH 通用事件驱动的本地演示场景"></canvas><div class="scene-overlay"><span>＋</span><span id="sceneStatus">等待 YH 事件</span></div><div class="scene-coordinates"><span>LEVEL <b id="sceneLevel">0.42</b></span><span>ONSET → PULSE → DECAY</span></div></div>
+          <div class="scene-footer"><div class="scene-caption"><i></i><span>BASE SCALE: /yh/level</span><span class="caption-muted">· 短暂放大后平滑回落：/yh/onset</span></div><button id="resetScene" class="text-button" type="button">重置视图 ↺</button></div>
+        </section>
+      </section>
+
+      <section class="panel monitor-panel">
+        <div class="monitor-header"><div class="panel-heading"><div class="panel-icon blue">⌁</div><div><div class="panel-title">事件监视器</div><div class="panel-subtitle">触发与外部事件逐条记录；连续归一化 /yh/level 单独汇总</div></div></div><div class="monitor-tools"><span class="level-stream"><i></i> /yh/level · 0–1 <b id="levelStreamValue">等待数据</b></span><div class="filter-wrap"><span>⌕</span><input id="eventFilter" type="text" placeholder="筛选地址…" aria-label="筛选事件地址" /></div><button id="clearEvents" class="clear-button" type="button">清空</button><span class="monitor-live"><i></i> LOCAL STREAM</span></div></div>
+        <div class="event-table"><div class="event-table-head"><span>TIME</span><span>ADDRESS</span><span>TYPE</span><span>VALUE</span><span>SOURCE</span></div><div id="eventList" class="event-list"><div class="empty-state"><span>⌁</span><b>等待事件</b><small>开启麦克风，或发送一个合成事件</small></div></div></div>
+        <div class="monitor-footer"><span><i></i><b id="monitorCount">0</b> 条事件</span><span>YH EVENT API · /yh/level · /yh/onset</span></div>
+      </section>
+
+      <footer class="page-footer"><span>YH UNIVERSAL RUNTIME <span class="footer-version">LOCAL PROTOTYPE</span></span><span>UNIVERSAL EVENT API <i>/</i> LOCAL FIRST</span></footer>
+    </main>
+  </div>
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>

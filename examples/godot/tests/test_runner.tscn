@@ -1,0 +1,14 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://YHEventNode.gd" id="1_yh"]
+[ext_resource type="Script" path="res://tests/test_runner.gd" id="2_test"]
+[sub_resource type="SphereMesh" id="SphereMesh_orb"]
+[node name="YH_Godot_Test" type="Node3D"]
+script = ExtResource("2_test")
+
+[node name="Orb" type="MeshInstance3D" parent="."]
+mesh = SubResource("SphereMesh_orb")
+
+[node name="YHEventNode" type="Node" parent="."]
+script = ExtResource("1_yh")
+target_path = NodePath("../Orb")

@@ -1,0 +1,23 @@
+YH Universal Runtime
+Copyright 2026 BC Xu
+
+This product includes software developed by the following third-party projects.
+Each remains under its own license, included here for attribution.
+
+- three (https://threejs.org), version 0.187.0, MIT License.
+  Copyright 2010-2026 the three.js authors.
+
+- @babylonjs/core (https://www.babylonjs.com), version 9.34.0, Apache License 2.0.
+  Copyright Babylon.js contributors.
+
+- ws (https://github.com/websockets/ws), version 8.22.1, MIT License.
+  Copyright (c) 2011 Einar Otto Stangvik and contributors.
+
+- Vite (https://vite.dev), version 8.3.5, MIT License (development dependency).
+  See node_modules/vite/LICENSE.md for the copyright notice.
+
+Not distributed with this project:
+- Verge3D runtime (v3d.js and related files). It is proprietary software. Place
+  it under public/vendor/verge3d/ yourself under its own license; see
+  public/vendor/verge3d/README.txt.
+- Godot Engine, used only for the optional headless tests and the Godot example.

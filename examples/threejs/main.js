@@ -1,0 +1,32 @@
+import * as THREE from 'three';
+import { YHEventClient } from '../../src/event-client.mjs';
+import { YHThreeAdapter } from '../../src/adapters/three.js';
+import { releaseOnPageHide } from '../../src/page-lifecycle.mjs';
+import '../demo.css';
+
+const $ = selector => document.querySelector(selector);
+const canvas = $('#canvas');
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(42, 1, 0.1, 50);
+camera.position.set(0, 0, 4.2);
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 2));
+renderer.setSize($('#scene').clientWidth, $('#scene').clientHeight, false);
+scene.add(new THREE.HemisphereLight(0xddeaff, 0x15201d, 2));
+const light = new THREE.DirectionalLight(0xd5ff9c, 3); light.position.set(-2, 3, 4); scene.add(light);
+const material = new THREE.MeshStandardMaterial({ color: 0x9fe45a, emissive: 0x17350c, roughness: 0.28, metalness: 0.12 });
+const orb = new THREE.Mesh(new THREE.SphereGeometry(0.82, 48, 32), material); scene.add(orb);
+const wire = new THREE.Mesh(new THREE.SphereGeometry(0.835, 28, 20), new THREE.MeshBasicMaterial({ color: 0xd5ffad, wireframe: true, transparent: true, opacity: 0.09 })); orb.add(wire);
+const resize = () => { const box = $('#scene').getBoundingClientRect(); renderer.setSize(Math.max(1, box.width), Math.max(1, box.height), false); camera.aspect = box.width / box.height; camera.updateProjectionMatrix(); };
+new ResizeObserver(resize).observe($('#scene')); resize();
+
+const yh = new YHEventClient({ url: 'ws://127.0.0.1:8765/ws' });
+const adapter = new YHThreeAdapter(yh, orb);
+yh.on('/yh/level', event => $('#level').textContent = Number(event.value).toFixed(2));
+yh.on('status', state => { $('#status').textContent = state.status === 'connected' ? '本机桥接已连接' : state.status; $('#dot').classList.toggle('on', state.status === 'connected'); });
+yh.connect().then(() => { document.documentElement.dataset.sampleReady = 'three'; }).catch(error => { $('#status').textContent = error.message; });
+$('#sendLevel').addEventListener('click', () => yh.sendControl('/yh/level', Number($('#levelInput').value)));
+$('#sendOnset').addEventListener('click', () => yh.sendControl('/yh/onset', 1));
+let last = performance.now();
+renderer.setAnimationLoop(now => { const dt = Math.min(0.05, (now - last) / 1000); last = now; orb.rotation.y += dt * 0.2; adapter.update(dt); renderer.render(scene, camera); });
+releaseOnPageHide(() => { adapter.dispose(); yh.close(); renderer.dispose(); });

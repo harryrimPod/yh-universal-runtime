@@ -1,0 +1,14 @@
+<!doctype html>
+<html lang="zh-CN">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#080a12"><title>YH · Verge3D Example</title></head>
+<body>
+  <main class="demo-shell">
+    <header><a href="/">YH / UNIVERSAL RUNTIME</a><span class="engine-tag">VERGE3D</span></header>
+    <section class="demo-copy"><p class="kicker">ENGINE SAMPLE 03 / VERGE3D</p><h1>Local event → <em>Verge3D</em></h1><p>本机的 Verge3D runtime 加载本目录的 glTF 样例；YH adapter 使用 Verge3D 的 Object3D 缩放向量。</p></section>
+    <section class="scene-card"><div id="scene" class="scene"><div id="v3d-container"></div><div class="scene-state"><i id="dot"></i><span id="status">检查本机 Verge3D runtime…</span></div><div class="scene-level">LEVEL <b id="level">0.42</b></div></div></section>
+    <section class="controls"><div><label for="levelInput">合成 level</label><input id="levelInput" type="range" min="0" max="1" step="0.01" value="0.42"><button id="sendLevel">发送 /yh/level</button></div><button id="sendOnset" class="accent">触发合成 /yh/onset</button></section>
+    <p class="note">需要本机 Verge3D 安装：把安装包 build 目录中的 runtime 文件复制到 <code>public/vendor/verge3d/</code>，无需联网下载。YH 事件桥接仍只连 localhost。</p>
+  </main>
+  <script type="module" src="./main.js"></script>
+</body>
+</html>

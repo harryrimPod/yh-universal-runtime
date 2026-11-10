@@ -1,0 +1,33 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://YHEventNode.gd" id="1_yh"]
+[sub_resource type="SphereMesh" id="SphereMesh_orb"]
+radius = 0.8
+height = 1.6
+radial_segments = 48
+rings = 24
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_orb"]
+albedo_color = Color(0.58, 0.86, 0.3, 1)
+metallic = 0.12
+roughness = 0.28
+emission_enabled = true
+emission = Color(0.08, 0.14, 0.03, 1)
+emission_energy_multiplier = 0.8
+
+[node name="YH_Godot_Sample" type="Node3D"]
+
+[node name="Camera3D" type="Camera3D" parent="."]
+position = Vector3(0, 0, 4.2)
+current = true
+
+[node name="KeyLight" type="DirectionalLight3D" parent="."]
+rotation_degrees = Vector3(-40, 25, 0)
+light_energy = 1.4
+
+[node name="Orb" type="MeshInstance3D" parent="."]
+mesh = SubResource("SphereMesh_orb")
+material_override = SubResource("StandardMaterial3D_orb")
+
+[node name="YHEventNode" type="Node" parent="."]
+script = ExtResource("1_yh")
+target_path = NodePath("../Orb")
