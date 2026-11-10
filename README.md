@@ -10,7 +10,7 @@ Quick start: install Node.js 22.12+ (or 20.19+), run `npm ci`, then `node script
 
 License: Apache License 2.0 (see [`LICENSE`](./LICENSE) and [`NOTICE`](./NOTICE) for third-party attributions).
 
-Status: v0.2 prototype, not a certified product. Verified on one Windows machine with one microphone array; false-trigger rates in noisy venues, hosted https deployment, and several engines/versions are not verified. See the Chinese sections below and [`docs/internal/REVIEW_HANDOFF.md`](./docs/internal/REVIEW_HANDOFF.md) for the full list. The Verge3D runtime is proprietary and is not included.
+Status: v0.2 prototype, not a certified product. Verified on one Windows machine with one microphone array; false-trigger rates in noisy venues, hosted https deployment, and several engines/versions are not verified. See the Chinese sections below for the full list. The Verge3D runtime is proprietary and is not included.
 
 页面本身是一个本地 Web 应用，内置演示场景用于验证事件链路。服务只在本机运行，不会发布到公网，也不会上传或保存原始音频。
 
@@ -109,4 +109,4 @@ v0.2 的 `npm test` 共 162 项（Node，含真实 Three.js `AnimationMixer`、B
 
 测试覆盖合成 440 Hz 波形、稳态和轻微起伏的背景噪声抑制、校准与重触发、场景电平门控与滞回、适配器缩放及独立 onset 脉冲，以及 `/yh/level` 和 `/yh/onset` 的 WebSocket → OSC/UDP 回环链路。Three.js 和 Babylon.js 的浏览器样例已启动验证。Godot **4.6.2** 的三个无头场景均通过，4.7.x 尚未在当前环境复验。Verge3D 只验证了本地 glTF 资产，真实 runtime 尚未运行。
 
-Windows Chrome 已用真实 Realtek 麦克风阵列完成本机验收（这是单样本识别器时的结果。多次录入、梅尔 + DTW、多目标的新识别器：我用合成信号和 Chrome 文件注入验证过；用户另报告在这台电脑的真实麦克风上手动测试了新识别器，拍手、响指都能触发（来源是用户报告；我没有亲自验证，也没有留下录音、匹配度或容差数据）。现场背景声下的误触发率仍未量化）。默认扬声器播放的参考短音可录入，重放三次各触发一次，异频短音和同频长音均未触发。实机也验证了独占丢弃提示、无样本选择和清除样本回退。主动停止后，第二个 WebSocket 客户端收到电平和三个频段的四个零值。验收范围为这台电脑本机运行，USB 拔插不在验收范围内。最终目标声可在确定后用实际背景音试录。详见 [本机声学验收记录](./docs/internal/REVIEW_HANDOFF.md#windows-本机声学验收2026-11-10)。
+Windows Chrome 已用真实 Realtek 麦克风阵列完成本机验收（这是单样本识别器时的结果。多次录入、梅尔 + DTW、多目标的新识别器：我用合成信号和 Chrome 文件注入验证过；用户另报告在这台电脑的真实麦克风上手动测试了新识别器，拍手、响指都能触发（来源是用户报告；我没有亲自验证，也没有留下录音、匹配度或容差数据）。现场背景声下的误触发率仍未量化）。默认扬声器播放的参考短音可录入，重放三次各触发一次，异频短音和同频长音均未触发。实机也验证了独占丢弃提示、无样本选择和清除样本回退。主动停止后，第二个 WebSocket 客户端收到电平和三个频段的四个零值。验收范围为这台电脑本机运行，USB 拔插不在验收范围内。最终目标声可在确定后用实际背景音试录。逐次的录音数据和原始记录未随仓库发布。
