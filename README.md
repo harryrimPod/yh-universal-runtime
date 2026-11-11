@@ -2,11 +2,11 @@
 
 ## 演示：声控汽车
 
-[![声控汽车演示：打响指开门并闪灯，拍手双门开合（点击播放，带声音）](docs/media/car_demo_poster.png)](docs/media/car_demo.mp4)
+https://github.com/user-attachments/assets/bf375814-1a9f-4b37-a905-1666de67add5
 
-为响指和拍手各选一段模型动画，在本机录入后就能用自己的声音触发。**点击图片播放完整视频（约 18 秒，带声音）。** 演示页面在 `demo/car/`。
+为响指和拍手各选一段模型动画，在本机录入后就能用自己的声音触发。上面的视频约 18 秒，带声音，点击播放。如果无法播放，可以[直接下载视频](docs/media/car_demo.mp4)。演示页面在 `demo/car/`。
 
-*Demo: record a finger snap and a hand clap on your own machine, pick an animation for each, and trigger the car with your voice. Click the image to play the full video (about 18 s, with sound).*
+*Demo: record a finger snap and a hand clap on your own machine, pick an animation for each, and trigger the car with your voice. The video above is about 18 s long and has sound. If it does not play, [download it here](docs/media/car_demo.mp4).*
 
 YH 的本机通用音频事件原型：浏览器直接获取麦克风，在本地计算音频电平与触发，再经统一接口把事件送到引擎。
 
