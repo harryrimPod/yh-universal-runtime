@@ -1,5 +1,13 @@
 # YH Universal Runtime
 
+## 演示：声控汽车
+
+[![声控汽车演示：打响指开门并闪灯，拍手双门开合](docs/media/car_demo_preview.gif)](docs/media/car_demo.mp4)
+
+为响指和拍手各选一段模型动画，在本机录入后就能用自己的声音触发。点击图片观看完整视频（约 18 秒，含声音）。演示页面在 `demo/car/`。
+
+*Demo: record a finger snap and a hand clap on your own machine, pick an animation for each, and trigger the car with your voice. Click the image for the full video (about 18 s, with sound).*
+
 YH 的本机通用音频事件原型：浏览器直接获取麦克风，在本地计算音频电平与触发，再经统一接口把事件送到引擎。
 
 ## English summary
