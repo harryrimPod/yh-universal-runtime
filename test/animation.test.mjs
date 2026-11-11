@@ -65,6 +65,27 @@ test('rules ignore events whose value is not a finite number instead of firing o
   assert.deepEqual(calls, ['Jump'], 'a bare onset still triggers');
 });
 
+test('Three.js clips start at the end in reverse and repeat in the selected direction', () => {
+  const root = new THREE.Object3D();
+  const clip = new THREE.AnimationClip('Slide', 1, [new THREE.NumberKeyframeTrack('.position[x]', [0, 1], [0, 4])]);
+  const mixer = new THREE.AnimationMixer(root);
+  const driver = createThreeAnimationDriver({ mixer, clips: [clip] });
+  driver.trigger('Slide', { reverse: true });
+  driver.update(0.25);
+  assert.equal(root.position.x, 3);
+  driver.update(1);
+  assert.equal(root.position.x, 0);
+  assert.equal(driver.actions.get('Slide').isRunning(), false);
+
+  driver.trigger('Slide', { loop: 'repeat', reverse: true });
+  driver.update(1.25);
+  assert.equal(root.position.x, 3);
+  assert.equal(driver.actions.get('Slide').isRunning(), true);
+  driver.trigger('Slide', { reverse: false });
+  driver.update(0.25);
+  assert.equal(root.position.x, 1);
+});
+
 test('param rule drives clip weight and timeScale from continuous levels without touching the stream', () => {
   const { driver } = threeRig();
   const client = new FakeClient();

@@ -1,0 +1,186 @@
+.car-demo {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(275px, 310px);
+  gap: 14px;
+}
+
+.car-demo .scene-card {
+  display: flex;
+  flex-direction: column;
+}
+
+.car-demo .scene {
+  height: auto;
+  flex: 1;
+  min-height: 440px;
+}
+
+.model-controls, .model-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.model-controls {
+  justify-content: space-between;
+  padding: 10px 12px;
+  color: #ccd5e6;
+  font-size: 12px;
+}
+
+.model-actions input {
+  max-width: 180px;
+}
+
+.model-actions button {
+  cursor: pointer;
+}
+
+.scene-level {
+  color: #b4bfd3;
+  font-size: 11px;
+  padding: 7px 10px;
+  border-radius: 5px;
+  background: #11151dd9;
+}
+
+.sound-panel {
+  display: grid;
+  align-content: start;
+  gap: 12px;
+  padding: 16px;
+  border: 1px solid #252a3d;
+  border-radius: 13px;
+  background: #101421;
+  font-size: 12px;
+}
+
+.sound-panel h2 {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.sound-panel button, .sound-panel select {
+  padding: 7px 8px;
+  border: 1px solid #3c455a;
+  border-radius: 6px;
+  background: #171b28;
+  color: #e0e7f5;
+  font: inherit;
+}
+
+.sound-panel button {
+  cursor: pointer;
+}
+
+.sound-panel button:hover:enabled {
+  border-color: #b5ff6c;
+}
+
+.sound-panel button:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+.mic-row, .sound-meter label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.mic-row button {
+  flex: none;
+  color: #c7ff96;
+}
+
+.mic-row span, .sound-meter span, .sound-field {
+  color: #aab5ca;
+}
+
+.sound-field, .sound-meter {
+  display: grid;
+  gap: 4px;
+}
+
+.sound-field select, .sound-meter meter {
+  width: 100%;
+}
+
+.sound-meter meter, .threshold-field input {
+  accent-color: #b5ff6c;
+}
+
+.sound-options, .threshold-field {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+
+.threshold-field output {
+  text-align: right;
+}
+
+.threshold-field input {
+  grid-column: 1 / -1;
+  margin: 0;
+}
+
+.sound-target {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  gap: 8px;
+  min-width: 0;
+  margin: 0;
+  padding: 8px;
+  border: 1px solid #252a3d;
+  border-radius: 6px;
+}
+
+.sound-target legend {
+  padding: 0 4px;
+  font-weight: 600;
+}
+
+.sound-target button {
+  grid-area: 1 / 2;
+}
+
+.animation-clip {
+  grid-area: 1 / 1;
+  min-width: 0;
+}
+
+.playback-options {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  gap: 10px;
+}
+
+.playback-options input {
+  accent-color: #b5ff6c;
+}
+
+.sound-feedback {
+  min-height: 2.8em;
+  margin: 0;
+  color: #d3deef;
+  line-height: 1.4;
+}
+
+@media (max-width: 730px) {
+  .car-demo {
+    grid-template-columns: 1fr;
+  }
+
+  .car-demo .scene {
+    height: 40svh;
+    min-height: 230px;
+    flex: none;
+  }
+}

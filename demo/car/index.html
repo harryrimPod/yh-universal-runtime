@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#080a12">
+  <title>YH · 声控汽车</title>
+</head>
+<body>
+  <main class="demo-shell">
+    <header><a href="../../">YH / UNIVERSAL RUNTIME</a></header>
+    <section class="demo-copy">
+      <h1>声控<em>汽车</em></h1>
+      <p>为响指和拍手选一段模型动画，录入后就能用声音触发。</p>
+    </section>
+    <div class="car-demo">
+      <section class="scene-card" aria-label="声控汽车演示">
+        <div class="model-controls">
+          <span id="modelStatus" role="status"></span>
+          <div class="model-actions">
+            <label for="modelFile">载入 GLB</label>
+            <input id="modelFile" type="file" accept=".glb,model/gltf-binary">
+            <button id="resetModel" type="button" hidden>恢复汽车</button>
+          </div>
+        </div>
+        <div class="scene" id="scene">
+          <canvas id="canvas" aria-label="小汽车的 3D 模型"></canvas>
+          <div class="scene-state" role="status"><i id="dot"></i><span id="status">正在连接本机桥接…</span></div>
+          <div class="scene-level" role="status"><span id="doorReadout">两侧车门 <b id="doorState">已关闭</b> · </span><b id="lastAction">等待目标声</b></div>
+        </div>
+      </section>
+      <section class="sound-panel" aria-labelledby="sound-title">
+        <h2 id="sound-title">声音控制</h2>
+        <div class="mic-row">
+          <button id="micToggle" type="button" aria-pressed="false">开启麦克风</button>
+          <span id="micStatus" role="status">麦克风已关闭</span>
+        </div>
+        <label class="sound-field" for="deviceSelect">输入设备<select id="deviceSelect"><option value="">系统默认设备</option></select></label>
+        <div class="sound-meter">
+          <label for="rmsMeter">实时 RMS <output id="rmsReadout">0.0000</output></label>
+          <meter id="rmsMeter" min="0" max="0.08" value="0"></meter>
+          <span id="noiseGateStatus">等待校准</span>
+        </div>
+        <div class="sound-field threshold-field">
+          <label for="thresholdSlider">RMS 最低门限</label><output id="thresholdValue" for="thresholdSlider">0.010</output>
+          <input id="thresholdSlider" type="range" min="0.001" max="0.05" step="0.001" value="0.01">
+        </div>
+        <div class="sound-options">
+          <label class="sound-field" for="cueTakes">录入次数<select id="cueTakes"><option value="3">3 次</option><option value="4">4 次</option><option value="5">5 次</option></select></label>
+          <label class="sound-field" for="cueStrictness">识别严格度<select id="cueStrictness"><option value="0.75">严格</option><option value="1" selected>标准</option><option value="1.4">宽松</option></select></label>
+        </div>
+        <fieldset class="sound-target" id="snapBinding">
+          <legend>响指</legend>
+          <button id="recordSnap" type="button" disabled>录入响指</button>
+          <label class="sound-field animation-clip">动画<select id="snapClip"></select></label>
+          <div class="playback-options">
+            <label class="sound-field">播放方式<select id="snapLoop"><option value="once">单次</option><option value="repeat">重复</option></select></label>
+            <label><input id="snapReverse" type="checkbox"> 反向播放</label>
+          </div>
+        </fieldset>
+        <fieldset class="sound-target" id="clapBinding">
+          <legend>拍手</legend>
+          <button id="recordClap" type="button" disabled>录入拍手</button>
+          <label class="sound-field animation-clip">动画<select id="clapClip"></select></label>
+          <div class="playback-options">
+            <label class="sound-field">播放方式<select id="clapLoop"><option value="once">单次</option><option value="repeat">重复</option></select></label>
+            <label><input id="clapReverse" type="checkbox"> 反向播放</label>
+          </div>
+        </fieldset>
+        <p class="sound-feedback" id="cueStatus" role="status">开启麦克风，等底噪校准完成后录入目标声。</p>
+      </section>
+    </div>
+  </main>
+  <script type="module" src="./main.js"></script>
+</body>
+</html>

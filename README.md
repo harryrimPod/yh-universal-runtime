@@ -6,7 +6,7 @@ YH 的本机通用音频事件原型：浏览器直接获取麦克风，在本�
 
 YH Universal Runtime is a local-only prototype that turns microphone audio into engine-agnostic events. The browser analyses audio on-device (RMS level, three frequency bands, onset detection, and user-recorded "target sound" matching using a log-mel + DTW matcher), and a small Node bridge fans the events out as OSC-style messages over WebSocket (`ws://127.0.0.1:8765/ws`) and UDP (`127.0.0.1:9000`). Adapters are included for Three.js, Babylon.js, Verge3D and Godot 4. No raw audio is uploaded or stored; target-sound features are kept in the browser's `localStorage`.
 
-Quick start: install Node.js 22.12+ (or 20.19+), run `npm ci`, then `node scripts/dev.mjs` and open `http://127.0.0.1:5173`. On Windows you can double-click `Start_YH.bat`. Tests: `node --test` (162 tests); Godot headless tests: `node scripts/run-godot-tests.mjs` (set `GODOT_BIN`).
+Quick start: install Node.js 22.12+ (or 20.19+), run `npm ci`, then `node scripts/dev.mjs` and open `http://127.0.0.1:5173`. On Windows you can double-click `Start_YH.bat`. Run `node --test` for the 168 Node tests. For the Godot headless tests, set `GODOT_BIN` and run `node scripts/run-godot-tests.mjs`.
 
 License: Apache License 2.0 (see [`LICENSE`](./LICENSE) and [`NOTICE`](./NOTICE) for third-party attributions).
 
@@ -92,6 +92,17 @@ yh.sendControl('/yh/onset', 1); // 测试：经本机 OSC/UDP 回环广播
 前三个 JavaScript 适配器复用同一个 `YHEventClient`，Godot 4 使用原生 `WebSocketPeer` 读取相同 JSON 帧。Three.js、Babylon.js 与 Godot 都有独立的可运行样例；Verge3D 样例需使用本机安装的 runtime（不在此分发）。样例目录与验证矩阵见 [`examples/README.md`](./examples/README.md)，接入代码见 [`docs/ENGINE_INTEGRATION.md`](./docs/ENGINE_INTEGRATION.md)。
 想把自己的场景对象接入 YH，可先看一页版[对象接入快速指南](./docs/CONNECT_YOUR_OBJECT.md)，其中按四种引擎分别说明对象查找、适配器挂接和更新入口。
 
+## 案例 02 · 声控汽车
+
+启动 YH 后，打开 `http://127.0.0.1:5173/demo/car/`。在汽车页开启麦克风，等底噪校准完成后，点击「录入响指」和「录入拍手」，按提示分别录入短声。汽车页会直接识别这两种目标声并通过本机桥接驱动动画。
+
+- `/yh/cue/snap` 同时打开两侧车门，前照灯闪两次。
+- `/yh/cue/clap` 同时关闭两侧车门。
+
+声音旁的「动画」列表来自当前模型的动画片段。可选择单次、重复，并单独勾选反向播放。默认响指播放「开门并闪灯」，拍手反向播放「双门开合」。也可载入带内嵌资源和动画的本地 `.glb` 文件，为响指、拍手重新选择动画。每次触发会替换正在播放的片段。
+
+汽车页沿用控制台的本地音频分析和目标声识别。首次打开时可载入同一浏览器中控制台已有的 `snap` 和 `clap` 样本，之后在汽车页录入的样本和门限单独保存。汽车由 Three.js 在代码中生成，所需文件都在 [`demo/car/`](./demo/car/) 中。
+
 ## 四个最小引擎样例
 
 启动本机服务后，可直接打开 Three.js：`http://127.0.0.1:5173/examples/threejs/`、Babylon.js：`http://127.0.0.1:5173/examples/babylonjs/`，或 Verge3D：`http://127.0.0.1:5173/examples/verge3d/`。Verge3D 需要先把本机安装的 runtime 文件复制到 `public/vendor/verge3d/`；引擎没有随包分发。
@@ -105,7 +116,7 @@ npm test
 npm run build
 ```
 
-v0.2 的 `npm test` 共 162 项（Node，含真实 Three.js `AnimationMixer`、Babylon.js `NullEngine` 动画组、桥接令牌/来源策略/重连/心跳、`npm run bridge` 入口、麦克风启停竞态、目标声音匹配）。Godot 的三个回环测试用 `npm run test:godot`（即 `node scripts/run-godot-tests.mjs`）运行（自动启动并关闭桥接，需要本机 Godot 4.x，路径可用 `GODOT_BIN` 指定，且 8765/9000 端口须空闲），详见 [`examples/README.md`](./examples/README.md)。
+v0.2 的 `npm test` 共 168 项（Node，含真实 Three.js `AnimationMixer`、Babylon.js `NullEngine` 动画组、桥接令牌/来源策略/重连/心跳、`npm run bridge` 入口、麦克风启停竞态、后台采样计时器、目标声音匹配）。Godot 的三个回环测试用 `npm run test:godot`（即 `node scripts/run-godot-tests.mjs`）运行（自动启动并关闭桥接，需要本机 Godot 4.x，路径可用 `GODOT_BIN` 指定，且 8765/9000 端口须空闲），详见 [`examples/README.md`](./examples/README.md)。
 
 测试覆盖合成 440 Hz 波形、稳态和轻微起伏的背景噪声抑制、校准与重触发、场景电平门控与滞回、适配器缩放及独立 onset 脉冲，以及 `/yh/level` 和 `/yh/onset` 的 WebSocket → OSC/UDP 回环链路。Three.js 和 Babylon.js 的浏览器样例已启动验证。Godot **4.6.2** 的三个无头场景均通过，4.7.x 尚未在当前环境复验。Verge3D 只验证了本地 glTF 资产，真实 runtime 尚未运行。
 

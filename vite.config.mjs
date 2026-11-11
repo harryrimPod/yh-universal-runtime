@@ -10,6 +10,7 @@ export default defineConfig({
     rollupOptions: {
       input: {
         dashboard: resolve(root, 'index.html'),
+        car: resolve(root, 'demo/car/index.html'),
         threejs: resolve(root, 'examples/threejs/index.html'),
         babylonjs: resolve(root, 'examples/babylonjs/index.html'),
         verge3d: resolve(root, 'examples/verge3d/index.html')

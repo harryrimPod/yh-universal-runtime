@@ -18,6 +18,7 @@ export function createCallbackDriver({ trigger = () => false, setParam = () => {
 /**
  * Three.js (and Verge3D, whose AnimationMixer API matches) driver.
  * `clips` is an array of AnimationClip or a { name: clip } map.
+ * Pass `reverse: true` to start a trigger at the end of the clip and play backward.
  * Param names: "Clip:weight" (default) or "Clip:timeScale".
  */
 export function createThreeAnimationDriver({ mixer, clips, ownsMixer = true } = {}) {
@@ -33,13 +34,15 @@ export function createThreeAnimationDriver({ mixer, clips, ownsMixer = true } = 
     return actions.get(name);
   };
   return {
-    trigger(name, { intensity = 1, loop = 'once' } = {}) {
+    trigger(name, { intensity = 1, loop = 'once', reverse } = {}) {
       const target = action(name);
       if (!target) return false;
       target.reset();
       target.setLoop(loop === 'repeat' ? LOOP_REPEAT : LOOP_ONCE, loop === 'repeat' ? Infinity : 1);
       target.clampWhenFinished = loop !== 'repeat';
       target.setEffectiveWeight(clamp01(intensity));
+      if (reverse !== undefined) target.setEffectiveTimeScale(reverse ? -1 : 1);
+      if (reverse) target.time = target.getClip().duration;
       target.play();
       return true;
     },

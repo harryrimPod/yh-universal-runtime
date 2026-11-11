@@ -1,5 +1,6 @@
 import { DEFAULT_RMS_THRESHOLD, OnsetGate } from './audio-gate.mjs';
 import { DEFAULT_BANDS, bandLevels } from './audio-bands.mjs';
+import { setBackgroundInterval, clearBackgroundInterval } from './background-timer.mjs';
 
 const SAMPLE_INTERVAL_MS = 25;
 const AUDIO_CONSTRAINTS = { echoCancellation: false, noiseSuppression: false, autoGainControl: false };
@@ -21,8 +22,8 @@ export class YHMicrophone {
     deviceId = null,
     mediaDevices = globalThis.navigator?.mediaDevices,
     AudioContextImpl = globalThis.AudioContext || globalThis.webkitAudioContext,
-    setIntervalImpl = globalThis.setInterval?.bind(globalThis),
-    clearIntervalImpl = globalThis.clearInterval?.bind(globalThis),
+    setIntervalImpl = setBackgroundInterval,
+    clearIntervalImpl = clearBackgroundInterval,
     now = () => performance.now()
   } = {}) {
     this.onLevel = onLevel;
